@@ -11,7 +11,7 @@ from json import dumps, loads
 from math import ceil, floor, sqrt
 from os import path, system, remove
 from platform import system as platform
-from random import choice, choices, randint
+from random import choice
 from string import Formatter
 from sys import exit as sysexit, path as syspath, stdout
 from time import sleep, time
@@ -21,6 +21,7 @@ from webbrowser import open as webopen
 # import installed modules
 from jsons import dump, load
 from pygame.mixer import music
+import secrets
 
 # abort function to be used before functions that require libraries
 def abort_early() -> None:
@@ -189,7 +190,7 @@ def save_data_to_file():
 
 # decide if damage is critical
 def critical() -> bool:
-	return randint(0, 255) <= 17
+	return secrets.SystemRandom().randint(0, 255) <= 17
 
 # pokemon class
 class Pokemon:
@@ -201,7 +202,7 @@ class Pokemon:
 		self.name = dex[self.species]['name'] # type: ignore
 		self.type = dex[self.species]['type'] # type: ignore
 		self.level = level
-		self.ivs = ivs if ivs != 'random' else {i: randint(0, 31) for i in ['hp', 'atk', 'def', 'spa', 'spd', 'spe']}
+		self.ivs = ivs if ivs != 'random' else {i: secrets.SystemRandom().randint(0, 31) for i in ['hp', 'atk', 'def', 'spa', 'spd', 'spe']}
 		self.level_type = dex[self.species]['xp'] # type: ignore
 		self.total_xp = xp['total'][self.level_type][str(self.level)] # type: ignore
 		self.current_xp = current_xp
@@ -276,7 +277,7 @@ class Pokemon:
 			# TODO: Implement status conditions
 			sp(f'(Note: {move["name"].upper()} is a status move)')
 		else:
-			if randint(1,100) <= move_entry["accuracy"]:
+			if secrets.SystemRandom().randint(1,100) <= move_entry["accuracy"]:
 				return self.damage_calc(move_entry, attacker)
 			sp(f'{attacker.name} missed!')
 			return 0
@@ -285,7 +286,7 @@ class Pokemon:
 	def damage_calc(self, move_entry, attacker):
 		is_critical = critical()
 		attack_defense = ('atk', 'def') if move_entry['damage_class'] == 'physical' else ('spa', 'spd')
-		result = floor((((((2 * attacker.level * (2 if is_critical else 1) / 5) + 2) * move_entry['power'] * attacker.stats[attack_defense[0]] / self.stats[attack_defense[1]]) / 50) + 2) * (1.5 if move_entry['type'] == attacker.type else 1) * randint(217, 255) / 255 * (type_effectiveness(move_entry, self) if save['flag']['been_to_route_1'] else 1))
+		result = floor((((((2 * attacker.level * (2 if is_critical else 1) / 5) + 2) * move_entry['power'] * attacker.stats[attack_defense[0]] / self.stats[attack_defense[1]]) / 50) + 2) * (1.5 if move_entry['type'] == attacker.type else 1) * secrets.SystemRandom().randint(217, 255) / 255 * (type_effectiveness(move_entry, self) if save['flag']['been_to_route_1'] else 1))
 
 		self.stats['chp'] -= result
 		if result > 0: 
@@ -444,7 +445,7 @@ class Pokemon:
 		elif self.stats['hp'] / (2 if ball == "Great Ball" else 3) >= self.stats['chp'] and (status + C + 1) / ball_modifier >= 1: # type: ignore
 			catch = True
 		else:
-			X = randint(0, ball_modifier-1) # type: ignore
+			X = secrets.SystemRandom().randint(0, ball_modifier-1) # type: ignore
 			if X < status:
 				catch = True
 			elif X > status + C:
@@ -453,7 +454,7 @@ class Pokemon:
 				catch = min(
 					255,
 					self.stats['hp'] * 255 // (8 if ball == "Great Ball" else 12) // max(1, floor(self.stats['chp'] / 4))
-					) >= randint(0, 255)
+					) >= secrets.SystemRandom().randint(0, 255)
 
 		if catch:
 			return self.add_caught_pokemon(save)
@@ -727,7 +728,7 @@ def battle(opponent_party=None, battle_type='wild', name=None, title=None, start
 
 		# opponent attack
 		if not save['party'][current].check_fainted() and not opponent_party[opponent_current].check_fainted(): # type: ignore
-			save['party'][current].deal_damage(opponent_party[opponent_current], choice(opponent_party[opponent_current].moves)) # type: ignore
+			save['party'][current].deal_damage(opponent_party[opponent_current], secrets.SystemRandom().choice(opponent_party[opponent_current].moves)) # type: ignore
 			opponent_attacked_this_turn = True
 
 		# player attack if player speed is lower
@@ -824,7 +825,7 @@ def get_encounter(loc, type) -> dict:
 		for i in range(len(rates[loc][type][chance])): # type: ignore
 			pokemon.append(rates[loc][type][chance][i]) # type: ignore
 			weights.append(int(chance)/255)
-	return choices(pokemon, weights)[0]
+	return secrets.SystemRandom().choices(pokemon, weights)[0]
 
 def display_pokemart(loc) -> None: # sourcery skip: low-code-quality
 	choice = ''
