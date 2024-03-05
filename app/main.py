@@ -646,7 +646,7 @@ def battle(opponent_party=None, battle_type='wild', name=None, title=None, start
 					move_entry = list(filter(lambda m, i=i: m['name'] == save['party'][current].moves[i]['name'], moves))[0] # type: ignore
 					sp(f'[{i+1}] - {save["party"][current].moves[i]["name"].upper().replace("-"," ")}{" "*(longest_move_name_length-len(save["party"][current].moves[i]["name"].upper().replace("-"," ")))} | `{move_entry["type"].upper()}`{" "*(longest_type_name_length-len(move_entry["type"].upper()))} - {save["party"][current].moves[i]["pp"]}/{move_entry["pp"]}')
 					options.append(str(i+1))
-				sp(f'[e] - Back\n')
+				sp('[e] - Back\n')
 				valid_choice = False
 				while not valid_choice:
 					move_choice = get()
@@ -848,7 +848,7 @@ def display_pokemart(loc) -> None: # sourcery skip: low-code-quality
 					options.append(str(i))
 					price_len = len("{:,}".format(items[item]["price"])) # type: ignore
 					sp(f'[{i}] - {item}{" "*(max_name_length-len(item))}{" "*(8-price_len)}¥{"{:,}".format(items[item]["sell_price"])}') # type: ignore
-				sp(f'[e] - Back\n')
+				sp('[e] - Back\n')
 				while not choice:
 					choice = get()
 				if choice not in options:
@@ -893,7 +893,7 @@ def display_pokemart(loc) -> None: # sourcery skip: low-code-quality
 					options.append(str(i))
 					price_len = len("{:,}".format(items[item]["price"])) # type: ignore
 					sp(f'[{i}] - {item}{" "*(max_name_length-len(item))}{" "*(8-price_len)}¥{"{:,}".format(items[item]["price"])}') # type: ignore
-				sp(f'[e] - Back\n')
+				sp('[e] - Back\n')
 				while not choice:
 					choice = get()
 				if choice not in options:
